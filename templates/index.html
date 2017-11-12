@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #url-input {
+            width: 400px;
+        }
+
+        .player {
+          position: absolute;
+          top:20px;
+          right: 20px;
+          width:200px;
+        }
+
+        pre {
+            background-color: lightgrey;
+            border-style: solid ;
+            border-width: 1px;
+            border-color: black;
+            min-height: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .container {
+            width: 95%;
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+</head>
+<body>
+<div class="container" style="max-width: 95%">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <button class="btn" id="predict">Predict</button>
+                <button class="btn" id="process-remote-image">Process Remote Image</button>
+                <button class="btn" id="run-webcam">Run Webcam</button>
+                <input class="input" type="text" id="url-input" placeholder="Paste URL..." value="https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/Common-dog-behaviors-explained.jpg?itok=FSzwbBoi"/>
+
+            </div>
+            <br>
+            <div class="row">
+                <video class="player"></video>
+                <canvas id="buffer-canvas" hidden></canvas>
+                <canvas id="canvas"></canvas>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <pre id="predictions"></pre>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script>
+
+    const img = new Image()
+
+    img.src = "./static/elephant.jpeg";
+
+    const video = document.querySelector('.player')
+    const url_input = document.getElementById("url-input");
+    const predict_btn = document.getElementById("predict");
+    const remote_img_btn = document.getElementById("process-remote-image");
+    const run_webcam_btn = document.getElementById("run-webcam");
+    const canvas = document.getElementById("canvas");
+    const buffer_canvas = document.getElementById("buffer-canvas")
+    const ctx = canvas.getContext('2d');
+    const buffer_ctx = buffer_canvas.getContext("2d");
+    const predictions = document.getElementById("predictions")
+
+
+    function getVideo(){
+        navigator.mediaDevices.getUserMedia({video : true, audio : false})
+            .then(localMediaStream => {
+                console.log(localMediaStream)
+                video.src = window.URL.createObjectURL(localMediaStream);
+                video.play();
+            })
+            .catch(err => {
+                console.error("OH NO!!", err);
+            })
+        }
+
+
+    function paintToCanvas() {
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+        canvas.width = width;
+        canvas.height = height;
+        buffer_canvas.width = width;
+        buffer_canvas.height = height;
+        console.log(width, height);
+
+        var int = setInterval(() => {
+            buffer_ctx.drawImage(video, 0, 0, width, height);
+
+            var dataURL = buffer_canvas.toDataURL("image/png");
+            var data = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+            form = new FormData()
+            form.append( "json", JSON.stringify( {img: data} ))
+            fetch('/image_prediction_get_results', {
+                method: 'POST',
+                body: form
+            })
+            .then(res => res.json())
+            .then(res => {
+                img.src  = "data:image/jpeg;base64, "+res.data
+            })
+            .catch(e => {
+                console.log("failed on loaded callback")
+                console.log(e);
+                video.stop();
+                clearInterval(int)
+            })
+//            let pixels = ctx.getImageData(0, 0, width, height);
+//            ctx.putImageData(pixels, 0, 0);
+            //debugger;
+        }, 500);
+    }
+
+
+
+    //src: https://stackoverflow.com/a/133997
+    function post(path, params, method) {
+        method = method || "post"; // Set method to post by default if not specified.
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        for(var key in params) {
+            if(params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+             }
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
+    function addImageToCanvas(){
+        console.log('addImage To canvas')
+        canvas.width = img.width;
+        canvas.height = img.height;
+        //console.log(img)
+        ctx.drawImage(img, 0, 0);
+    }
+
+
+    function getBase64Image() {
+        // Create an empty canvas element
+        //var canvas = document.createElement("canvas");
+
+
+        // Get the data-URL formatted image
+        // Firefox supports PNG and JPEG. You could check img.src to
+        // guess the original format, but be aware the using "image/jpg"
+        // will re-encode the image.
+        var dataURL = canvas.toDataURL("image/png");
+
+        return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    }
+
+
+    function predict(){
+        data = getBase64Image();
+        //below 2 lines are current critical https://stackoverflow.com/a/29823632
+        form = new FormData();
+        form.append( "json", JSON.stringify( {img: data} ));
+        fetch('/predict_mobilenet', {
+            method: 'POST',
+            body: form
+        })
+        .then(res => res.text())
+        .then(res => {
+            //console.log(res.data)
+            predictions.innerText = res //  = res.data.toString()
+        })
+        .catch(e => {
+            console.log("failed on loaded callback");
+            console.log(e)
+        })
+    }
+
+
+
+    if(img.complete){
+        addImageToCanvas()
+    }
+
+    img.addEventListener('load', addImageToCanvas)
+    predict_btn.addEventListener('click', predict);
+    remote_img_btn.addEventListener('click', () => {
+        fetch('/get_remote_image?image_url='+url_input.value)
+            .then(res => res.text())
+            .then(res => {
+                img.src = "data:image/jpeg;base64, "+res
+            })
+    })
+
+    run_webcam_btn.addEventListener('click', () =>{
+        getVideo()
+    })
+    video.addEventListener('canplay', paintToCanvas);
+
+</script>
+</body>
+</html>
