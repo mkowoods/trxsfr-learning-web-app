@@ -3,9 +3,17 @@ from flask import render_template, request
 import requests
 import json
 import base64
+import random
+import os
+
+
 import util
 
 app = Flask(__name__)
+
+BASE_DIR = os.path.dirname(__file__)
+
+RAND_TRAIN_IMG_PATH =  os.path.join(BASE_DIR, 'images/ILSVRC/Data/DET/test')
 
 
 @app.route('/')
@@ -37,7 +45,14 @@ def get_results():
     print(res_data)
     return json.dumps( {'data': res_data}, indent=4, separators=(',', ': '))
 
-
+@app.route('/get_random_image_from_cache', methods = ['GET'])
+def random_image():
+    rand_file = random.choice(os.listdir( RAND_TRAIN_IMG_PATH))
+    rand_file_path = os.path.join(RAND_TRAIN_IMG_PATH, rand_file)
+    print(rand_file_path)
+    with open(rand_file_path, 'rb') as f:
+        print(f)
+        return base64.b64encode(f.read())
 
 
 if __name__ == "__main__":

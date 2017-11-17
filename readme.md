@@ -5,6 +5,8 @@
 
  # TODO
  https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
+
+ need to add a batch learner for classifying the case
  
 # FUTURE OPTIMIZATIONS 
  - quantize the model:  https://www.tensorflow.org/performance/quantization
@@ -22,3 +24,7 @@
  https://medium.com/@timanglade/how-hbos-silicon-valley-built-not-hotdog-with-mobile-tensorflow-keras-react-native-ef03260747f3
  
  Need some random sample data to train the model as well
+ 
+# DATASET:
+https://www.kaggle.com/c/imagenet-object-detection-challenge/data
+
