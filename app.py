@@ -5,13 +5,15 @@ import json
 import base64
 import random
 import os
-
+import config
+import mob_net_cls
+import time
 
 import util
 
 app = Flask(__name__)
 
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = config.BASE_DIR
 
 RAND_TRAIN_IMG_PATH =  os.path.join(BASE_DIR, 'images/ILSVRC/Data/DET/test')
 
@@ -31,8 +33,6 @@ def get_remote_image():
 
 @app.route('/predict_mobilenet', methods = ['POST'])
 def get_results():
-
-    import mob_net_cls #for debugging on multiple threads
 
     data = request.form
     #s = time.time()
@@ -54,6 +54,22 @@ def random_image():
         print(f)
         return base64.b64encode(f.read())
 
+
+@app.route('/api/<model_name>', methods = ['GET'])
+def load_model(model_name):
+    s = time.time()
+    cls = mob_net_cls.CustomClassifier(project_name = model_name,
+                                       model_name='sklearn-svc-acc-0.98824-2017-11-20-21-11-24.pkl',
+                                       preprocess_funcs=[mob_net_cls.util_process_image, mob_net_cls.mobile_net_neck_predict])
+
+    #image_json = json.loads(request.form['json'])
+    #img_b64 = image_json['img']
+    #image_np = util.decode_b64_image_to_nparr_RGB(img_b64)
+    image_np = util.read_image_as_nparr_RGB('./images/elephant.jpeg', shape=(224, 224))
+    #print(image_np.shape)
+    res_data =  cls.predict_as_dict(image_np)
+    print('Elapsed Time', time.time() - s)
+    return json.dumps( {'data': res_data}, indent=4, separators=(',', ': '))
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -5,7 +5,7 @@
 
  # TODO
  https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
-
+https://hackernoon.com/creating-insanely-fast-image-classifiers-with-mobilenet-in-tensorflow-f030ce0a2991
  need to add a batch learner for classifying the case
  
 # FUTURE OPTIMIZATIONS 
@@ -28,3 +28,20 @@
 # DATASET:
 https://www.kaggle.com/c/imagenet-object-detection-challenge/data
 
+## Memory footprint
+tests are based on importing tensorflow and loading the  weights for imagenet
+```
+import tensorflow as tf
+mobilenet = tf.keras.applications.mobilenet
+```
+
+- Loading mobilenet with alpha @ 0.25
+    - `wts = mobilenet.MobileNet(weights='imagenet', alpha = 0.25)`
+    - Memory 138.4MB
+
+- Loading mobilenet with alpha @ 1.0
+    - `wts = mobilenet.MobileNet(weights='imagenet', alpha = 1.0)`
+    - Memory 157.7MB
+- Loading mobilenet with alpah @ 0.25, no top and image size = 128 by 128
+    - `wts = mobilenet.MobileNet(weights='imagenet', include_top = False, alpha = 0.25, input_shape = (128, 128, 3))'
+    - Memory: 137.6MB
