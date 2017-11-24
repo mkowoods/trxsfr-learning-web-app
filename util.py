@@ -9,6 +9,7 @@ import tensorflow as tf
 mobilenet = tf.keras.applications.mobilenet
 
 INPUT_SHAPE = (224, 224)
+INPUT_SHAPE_128_128 = (128, 128)
 
 
 def decode_b64_image_to_nparr_RGB(img_b64):

@@ -8,6 +8,9 @@
 https://hackernoon.com/creating-insanely-fast-image-classifiers-with-mobilenet-in-tensorflow-f030ce0a2991
  need to add a batch learner for classifying the case
  
+ compile tensorflow from scratch https://stackoverflow.com/questions/41293077/how-to-compile-tensorflow-with-sse4-2-and-avx-instructions
+ https://gist.github.com/bage79/ef955a460e33555830ea9217c5e2e925
+ 
 # FUTURE OPTIMIZATIONS 
  - quantize the model:  https://www.tensorflow.org/performance/quantization
  - can you serve the model faster using different compilation techniques?
@@ -28,6 +31,9 @@ https://hackernoon.com/creating-insanely-fast-image-classifiers-with-mobilenet-i
 # DATASET:
 https://www.kaggle.com/c/imagenet-object-detection-challenge/data
 
+# Load Balancing: 
+https://cloud.google.com/compute/docs/load-balancing/network/example
+
 ## Memory footprint
 tests are based on importing tensorflow and loading the  weights for imagenet
 ```
@@ -45,3 +51,6 @@ mobilenet = tf.keras.applications.mobilenet
 - Loading mobilenet with alpah @ 0.25, no top and image size = 128 by 128
     - `wts = mobilenet.MobileNet(weights='imagenet', include_top = False, alpha = 0.25, input_shape = (128, 128, 3))'
     - Memory: 137.6MB
+    
+    
+`nohup ~/miniconda/envs/trxsfr-learn-web/bin/python ~/trxsfr-learning-web-app/app.py &`

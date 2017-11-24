@@ -70,6 +70,8 @@
 
     img.src = "./static/elephant.jpeg";
 
+    const MAX_CANVAS_WIDTH = 600;
+
     const video = document.querySelector('.player')
     const url_input = document.getElementById("url-input");
     const predict_btn = document.getElementById("predict");
@@ -163,10 +165,13 @@
 
     function addImageToCanvas(){
         console.log('addImage To canvas')
-        canvas.width = img.width;
-        canvas.height = img.height;
+        const aspect_ratio = img.width/img.height;
+        const canvas_width = Math.min(MAX_CANVAS_WIDTH, img.width);
+        const canvas_height = canvas_width/aspect_ratio
+        canvas.width = canvas_width //img.width;
+        canvas.height = canvas_height //img.height;
         //console.log(img)
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, canvas_width, canvas_height);
     }
 
 
@@ -211,7 +216,8 @@
         addImageToCanvas()
     }
 
-    img.addEventListener('load', addImageToCanvas)
+    img.addEventListener('load', addImageToCanvas);
+
     predict_btn.addEventListener('click', predict);
     remote_img_btn.addEventListener('click', () => {
         fetch('/get_remote_image?image_url='+url_input.value)

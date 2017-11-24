@@ -8,7 +8,7 @@ import os
 import config
 import mob_net_cls
 import time
-
+import logging
 import util
 
 app = Flask(__name__)
@@ -17,6 +17,10 @@ BASE_DIR = config.BASE_DIR
 
 RAND_TRAIN_IMG_PATH =  os.path.join(BASE_DIR, 'images/ILSVRC/Data/DET/test')
 
+
+logging.basicConfig(level= logging.INFO)
+
+logging.info('Called app.py')
 
 @app.route('/')
 def index():
@@ -33,16 +37,15 @@ def get_remote_image():
 
 @app.route('/predict_mobilenet', methods = ['POST'])
 def get_results():
-
+    s = time.time()
     data = request.form
-    #s = time.time()
     imageJSON = json.loads(data['json'])
     img_b64 = imageJSON['img']
-    #print(img_b64)
+    s1 = time.time()
+    logging.info('Elapsed Time to Load: {time:.3f}'.format(time =  time.time() - s))
     image_np = util.decode_b64_image_to_nparr_RGB(img_b64)
-    print(image_np.shape)
-    res_data =  mob_net_cls.predict(image_np)
-    print(res_data)
+    res_data = mob_net_cls.predict(image_np)
+    logging.info('Time To Predict: {time:.3f}'.format(time =  (time.time() - s1)))
     return json.dumps( {'data': res_data}, indent=4, separators=(',', ': '))
 
 @app.route('/get_random_image_from_cache', methods = ['GET'])
@@ -72,4 +75,4 @@ def load_model(model_name):
     return json.dumps( {'data': res_data}, indent=4, separators=(',', ': '))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True )
