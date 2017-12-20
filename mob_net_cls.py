@@ -8,8 +8,8 @@ import os
 import config
 #Done so that only one copy of the variable is in memory
 
-MOB_NET = util.mobilenet.MobileNet(weights='imagenet')
-MOB_NET_BOTTLENECK = util.mobilenet.MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3), pooling='avg')
+MOB_NET = None #util.mobilenet.MobileNet(weights='imagenet')
+MOB_NET_BOTTLENECK = None #util.mobilenet.MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3), pooling='avg')
 #SVC_CLS = pickle.load(open('./is-penny-model-v1/model/sklearn-svc-acc-0.98824-2017-11-19-21-07-21.pkl', 'rb'))
 
 def mobile_net_predict(processed_img):

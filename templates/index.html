@@ -29,6 +29,14 @@
             width: 95%;
             margin-top: 20px;
         }
+
+        .rotate90 {
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+            transform: rotate(90deg);
+        }
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 </head>
@@ -45,9 +53,15 @@
                 <input class="input" type="text" id="url-input" placeholder="Paste URL..." value="https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/Common-dog-behaviors-explained.jpg?itok=FSzwbBoi"/>
 
             </div>
-            <br>
+
             <div class="row">
+                <button class="btn btn-success" onclick="rotate90DegreesRight()">Rotate Right</button>
                 <input id="file-upload" class="input" type="file" accept="image/*">
+            </div>
+            <div class="row">
+                <img id="loading-img" src="./static/ab79a231234507.564a1d23814ef.gif" height="20" width="20">
+                <div id="prob-penny"></div>
+
             </div>
             <div class="row">
 
@@ -55,9 +69,7 @@
                 <canvas id="buffer-canvas" hidden></canvas>
                 <canvas id="canvas"></canvas>
             </div>
-            <div class="row">
-                <div> Penny Probability: <span id="prob-penny"></span>%</div>
-            </div>
+
         </div>
         <div class="col-md-6">
             <pre id="predictions"></pre>
@@ -71,8 +83,6 @@
 <script>
 
     const img = new Image()
-
-    img.src = "./static/elephant.jpeg";
 
     const MAX_CANVAS_WIDTH = 600;
 
@@ -141,34 +151,6 @@
     }
 
 
-    //Probably can deprecate
-    {#//src: https://stackoverflow.com/a/133997#}
-    {#function post(path, params, method) {#}
-    {#    method = method || "post"; // Set method to post by default if not specified.#}
-    {##}
-    {#    // The rest of this code assumes you are not using a library.#}
-    {#    // It can be made less wordy if you use one.#}
-    {#    var form = document.createElement("form");#}
-    {#    form.setAttribute("method", method);#}
-    {#    form.setAttribute("action", path);#}
-    {##}
-    {#    for(var key in params) {#}
-    {#        if(params.hasOwnProperty(key)) {#}
-    {#            var hiddenField = document.createElement("input");#}
-    {#            hiddenField.setAttribute("type", "hidden");#}
-    {#            hiddenField.setAttribute("name", key);#}
-    {#            hiddenField.setAttribute("value", params[key]);#}
-    {##}
-    {#            form.appendChild(hiddenField);#}
-    {#         }#}
-    {#    }#}
-    {##}
-    {#    document.body.appendChild(form);#}
-    {#    form.submit();#}
-    {#}#}
-
-
-
 
     function getBase64Image() {
         // Create an empty canvas element
@@ -196,7 +178,6 @@
         })
         .then(res => res.text())
         .then(res => {
-            //console.log(res.data)
             predictions.innerText = res //  = res.data.toString()
         })
         .catch(e => {
@@ -206,24 +187,32 @@
     }
 
     function predict_model(){
+        //show loading image
+        document.getElementById("prob-penny").innerText = "";
+        document.getElementById("loading-img").style.visibility = "visible";
+
         data = getBase64Image();
         form = new FormData();
         form.append("json", JSON.stringify({img: data}));
+
         fetch('/api/is-penny-model-v1', {
             method: 'POST',
             body: form
         })
         .then(res => res.json())
         .then(res => {
+            document.getElementById("loading-img").style.visibility = "hidden";
             console.log(res.data)
-            document.getElementById("prob-penny").innerText = Math.round(res.data[1] * 10000000)/100000
+            const prob = Math.round(res.data[1] * 10000000)/100000;
+            document.getElementById("prob-penny").innerText = `P enny Probability: ${prob}%`
         })
-        .catch(e => {
+        .catch(err => {
+            document.getElementById("loading-img").style.visibility = "hidden";
             console.log("failed on loaded callback");
-            console.log(e)
+            console.log(err)
+            document.getElementById("prob-penny").innerText = err;
         })
     }
-
 
     function addImageToCanvas(){
         console.log('addImage To canvas')
@@ -234,12 +223,51 @@
         canvas.height = canvas_height //img.height;
         //console.log(img)
         ctx.drawImage(img, 0, 0, canvas_width, canvas_height);
+        setTimeout(predict_model, 500)
+    }
 
-        predict_model()
+    let angleInDegrees = 0
+    function rotate90DegreesRight(){
+
+        angleInDegrees += 90 % 360;
+
+        console.log('New angle in Degrees', angleInDegrees)
+
+        if (angleInDegrees === 90 || angleInDegrees === 270){
+            canvas.width = img.height;
+            canvas.height = img.width;
+        } else {
+            canvas.width = img.width;
+            canvas.height = img.height;
+        }
+
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+    
+        // save the unrotated ctx of the canvas so we can restore it later
+        // the alternative is to untranslate & unrotate after drawing
+        ctx.save();
+    
+        // move to the center of the canvas
+        ctx.translate(canvas.width/2,canvas.height/2);
+    
+        // rotate the canvas to the specified degrees
+        ctx.rotate(angleInDegrees*Math.PI/180);
+    
+        // draw the image
+        // since the ctx is rotated, the image will be rotated also
+        h = canvas.width
+        w = canvas.height
+        console.log(h, w)
+        ctx.drawImage(img,-img.width/2,-img.height/2);
+    
+        // we’re done with the rotating so restore the unrotated ctx
+        ctx.restore();
+        setTimeout(predict_model, 500)
     }
 
     if(img.complete){
         addImageToCanvas()
+        //setTimeout(predict_model, 500)
     }
 
     img.addEventListener('load', addImageToCanvas);
@@ -283,6 +311,8 @@
     })
     video.addEventListener('canplay', paintToCanvas);
 
+
+    img.src = "./static/elephant.jpeg"; //demo image
 </script>
 </body>
 </html>
