@@ -20,3 +20,6 @@ CONDA_ENV_NAME=trxsfr-learning-web-app
 $HOME/miniconda/bin/conda create -vy -n $CONDA_ENV_NAME python=3.5 flask
 source activate $CONDA_ENV_NAME
 pip install -r ~/trxsfr-learning-web-app/requirements.txt
+
+#link: https://stackoverflow.com/questions/47144624/unable-to-install-uwsgi-with-pip-on-ubuntu-16-04
+#need to run:: conda install -c conda-forge uwsgi

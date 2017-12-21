@@ -25,6 +25,8 @@ https://hackernoon.com/creating-insanely-fast-image-classifiers-with-mobilenet-i
  https://gking.harvard.edu/files/0s.pdf
  https://groups.google.com/forum/#!topic/keras-users/MUO6v3kRHUw
  https://medium.com/@timanglade/how-hbos-silicon-valley-built-not-hotdog-with-mobile-tensorflow-keras-react-native-ef03260747f3
+ https://www.tomstall.com/content/create-a-globally-distributed-tensorflow-serving-cluster-with-nearly-no-pain/
+ https://gist.github.com/avloss/01e43d208fbdb2c5b4f9b50e71617cc8
  
  Need some random sample data to train the model as well
  
