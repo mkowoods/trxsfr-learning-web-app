@@ -18,6 +18,7 @@ BASE_DIR = config.BASE_DIR
 RAND_TRAIN_IMG_PATH =  os.path.join(BASE_DIR, 'images/ILSVRC/Data/DET/test')
 
 s = time.time()
+img_np = util.read_image_as_nparr_RGB('./images/elephant.jpeg', shape=(224, 224))
 PENNY_MODEL = mob_net_cls.CustomClassifier(project_name = 'is-penny-model-v1',
                                            model_name='sklearn-svc-acc-0.98824-2017-11-20-21-11-24.pkl',
                                            preprocess_funcs=[mob_net_cls.util_process_image, mob_net_cls.mobile_net_neck_predict])
@@ -25,8 +26,13 @@ s1 = time.time()
 print('Loading PENNY_MODEL', s1 - s)
 
 
-_ = PENNY_MODEL.predict(util.read_image_as_nparr_RGB('./images/elephant.jpeg', shape=(224, 224)))
-print('Time to Load Model', time.time() - s1)
+_ = PENNY_MODEL.predict(img_np)
+print('Time to warm Penny Model', time.time() - s1)
+
+
+_ = mob_net_cls.predict(img_np)
+s2 = time.time()
+print('Time to warm  predict', time.time() - s2)
 
 
 #print(res)
