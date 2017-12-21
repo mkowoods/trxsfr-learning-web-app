@@ -3,6 +3,8 @@
  - Tesnorflow 1.4
 
 
+# /home/mkowoods/miniconda/envs/trxsfr-learning-app/bin/uwsgi --socket 0.0.0.0:5000 --processes=4 --protocol=http -w wsgi:app
+
  # TODO
  https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
 https://hackernoon.com/creating-insanely-fast-image-classifiers-with-mobilenet-in-tensorflow-f030ce0a2991
