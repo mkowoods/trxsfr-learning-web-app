@@ -7,7 +7,7 @@ User=mkowoods
 Group=www-data
 WorkingDirectory=/home/mkowoods/trxsfr-learning-web-app
 Environment="PATH=/home/mkowoods/miniconda/envs/trxsfr-learning-app/bin"
-ExecStart=/home/mkowoods/miniconda/envs/trxsfr-learning-app/bin/uwsgi --ini uwsgi_config.ini
+ExecStart=/home/mkowoods/miniconda/envs/trxsfr-learning-app/bin/uwsgi --ini trxsfr-learning-web-app-uwsgi-config.ini
 
 [Install]
 WantedBy=multi-user.target
