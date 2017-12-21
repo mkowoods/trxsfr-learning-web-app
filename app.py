@@ -55,7 +55,7 @@ def get_results():
     s1 = time.time()
     logging.info('Elapsed Time to Load: {time:.3f}'.format(time =  time.time() - s))
     image_np = util.decode_b64_image_to_nparr_RGB(img_b64)
-    print(image_np)
+    #print(image_np)
     res_data = mob_net_cls.predict(image_np)
     logging.info('Time To Predict: {time:.3f}'.format(time =  (time.time() - s1)))
     return json.dumps( {'data': res_data}, indent=4, separators=(',', ': '))
@@ -88,4 +88,4 @@ def load_model(model_name):
     return json.dumps({'data': res_data}, indent=4, separators=(',', ': '))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

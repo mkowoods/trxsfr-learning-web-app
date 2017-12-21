@@ -20,8 +20,7 @@
             border-style: solid ;
             border-width: 1px;
             border-color: black;
-            min-height: 20px;
-            max-height: 500px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
@@ -38,6 +37,14 @@
             transform: rotate(90deg);
         }
 
+        #url-input{
+            width: 400px;
+        }
+
+        #canvas {
+            margin: 20px;
+        }
+
         img {
             image-orientation: from-image;
         }
@@ -47,21 +54,25 @@
 <body>
 <div class="container" style="max-width: 95%">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-6">
             <div class="row">
                 <button class="btn btn-primary" id="predict">Predict</button>
-                <button class="btn btn-primary" id="process-remote-image">Process Remote Image</button>
                 <button class="btn btn-primary" id="random-image">Get Random Image</button>
-
-                <button class="btn btn-primary" id="run-webcam" disabled>Run Webcam</button>
-                <input class="input" type="text" id="url-input" placeholder="Paste URL..." value="https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/Common-dog-behaviors-explained.jpg?itok=FSzwbBoi"/>
-
             </div>
-
+            <div class="row">
+                <!--<button class="btn btn-primary" id="run-webcam" disabled>Run Webcam</button>-->
+                <button class="btn btn-primary" id="process-remote-image">Process Remote Image</button>
+            </div>
+            <div class="row">
+                <input class="input" type="text" id="url-input" placeholder="Paste URL..." value="https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/Common-dog-behaviors-explained.jpg?itok=FSzwbBoi"/>
+            </div>
             <div class="row">
                 <button class="btn btn-success" onclick="rotate90DegreesRight()">Rotate Right</button>
                 <input id="file-upload" class="input" type="file" accept="image/*">
             </div>
+
+        </div>
+        <div class="col-6">
             <div class="row">
                 <img id="loading-img" src="./static/ab79a231234507.564a1d23814ef.gif" height="20" width="20">
                 <div id="prob-penny"></div>
@@ -73,12 +84,16 @@
                 <canvas id="buffer-canvas" hidden></canvas>
                 <canvas id="canvas"></canvas>
             </div>
-
-        </div>
-        <div class="col-md-6">
-            <pre id="predictions"></pre>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <pre id="predictions"></pre>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -310,17 +325,17 @@
 
     predict_btn.addEventListener('click', predict);
 
-    remote_img_btn.addEventListener('click', () => {
-        fetch('/get_remote_image?image_url='+url_input.value)
-            .then(res => res.text())
-            .then(res => {
-                img.src = "data:image/jpeg;base64, "+res
-            })
-            .catch(e => {
-                console.log("failed on loaded callback");
-                console.log(e)
-            })
-    });
+    // remote_img_btn.addEventListener('click', () => {
+    //     fetch('/get_remote_image?image_url='+url_input.value)
+    //         .then(res => res.text())
+    //         .then(res => {
+    //             img.src = "data:image/jpeg;base64, "+res
+    //         })
+    //         .catch(e => {
+    //             console.log("failed on loaded callback");
+    //             console.log(e)
+    //         })
+    // });
 
     random_img_btn.addEventListener('click', () => {
         fetch('get_random_image_from_cache')
@@ -330,9 +345,10 @@
             })
     })
 
-    run_webcam_btn.addEventListener('click', () =>{
-        getVideo()
-    })
+    // run_webcam_btn.addEventListener('click', () =>{
+    //     getVideo()
+    // })
+
     video.addEventListener('canplay', paintToCanvas);
 
 
