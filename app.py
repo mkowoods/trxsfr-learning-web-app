@@ -10,6 +10,7 @@ import mob_net_cls
 import time
 import logging
 import util
+import datetime as dt
 
 app = Flask(__name__)
 
@@ -25,19 +26,24 @@ PENNY_MODEL = mob_net_cls.CustomClassifier(project_name = 'is-penny-model-v1',
 s1 = time.time()
 print('Loading PENNY_MODEL', s1 - s)
 
-
-_ = PENNY_MODEL.predict(img_np)
-print('Time to warm Penny Model', time.time() - s1)
-
-
-_ = mob_net_cls.predict(img_np)
-s2 = time.time()
-print('Time to warm  predict', time.time() - s2)
-
-
 #print(res)
 logging.basicConfig(level= logging.INFO)
 logging.info('Called app.py')
+
+@app.before_first_request
+def before_first_request():
+    print('########### Restarted, first request @ {} ############'.format(dt.datetime.utcnow()))
+
+
+    _ = PENNY_MODEL.predict(img_np)
+    print('Time to warm Penny Model', time.time() - s1)
+
+
+    _ = mob_net_cls.predict(img_np)
+    s2 = time.time()
+    print('Time to warm  predict', time.time() - s2)
+
+
 
 @app.route('/')
 def index():
