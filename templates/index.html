@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
     <style>
+        body {
+            padding-top: 10px;
+            font-size: 40px;
+        }
+
         #url-input {
             width: 400px;
         }
@@ -41,134 +48,138 @@
             width: 400px;
         }
 
-        #canvas {
-            margin: 20px;
+        /*#predict-canvas {*/
+            /*margin: 20px;*/
+        /*}*/
+
+        /*img {*/
+            /*image-orientation: from-image;*/
+        /*}*/
+
+        #choose-file {
+            text-align: center;
         }
 
-        img {
-            image-orientation: from-image;
+        #display-canvas {
+            width: 100%;
+            height: 100%;
         }
+
+        h1 {
+            font-size: 3.5rem;
+        }
+
+        #penny-label-text {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            /*text-align: center;*/
+            /*vertical-align: middle;*/
+            font-size: 40px;
+        }
+
+        #rotate-grp {
+            height: 80px;
+            margin-bottom: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+        #table-container {
+            max-height: 50vh;
+            overflow-y: scroll;
+            font-size: 20px;
+        }
+
     </style>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 </head>
 <body>
-test5
-<div class="container" style="max-width: 95%">
-    <div class="row">
-        <div class="col-6">
-            <div class="row">
-                <button class="btn btn-primary" id="predict">Predict</button>
-                <button class="btn btn-primary" id="random-image">Get Random Image</button>
-            </div>
-            <div class="row">
-                <!--<button class="btn btn-primary" id="run-webcam" disabled>Run Webcam</button>-->
-                <button class="btn btn-primary" id="process-remote-image">Process Remote Image</button>
-            </div>
-            <div class="row">
-                <input class="input" type="text" id="url-input" placeholder="Paste URL..." value="https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/Common-dog-behaviors-explained.jpg?itok=FSzwbBoi"/>
-            </div>
-            <div class="row">
-                <button class="btn btn-success" onclick="rotate90DegreesRight()">Rotate Right</button>
-                <input id="file-upload" class="input" type="file" accept="image/*">
-            </div>
-
-        </div>
-        <div class="col-6">
-            <div class="row">
-                <img id="loading-img" src="./static/ab79a231234507.564a1d23814ef.gif" height="20" width="20">
-                <div id="prob-penny"></div>
-
-            </div>
-            <div class="row">
-
-                <video class="player"></video>
-                <canvas id="buffer-canvas" hidden></canvas>
-                <canvas id="canvas"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="row">
+<div class="container-fluid" style="max-width: 95%;%">
+    <div class="row" style="">
         <div class="col-12">
-            <div class="row">
-                <pre id="predictions"></pre>
+            <div class="row" style="margin-bottom: 20px">
+
+                <button hidden  class="btn-lg btn-block btn-primary h1" id="predict"><h1>Predict</h1></button>
+                <label id="choose-file" class="btn-lg btn-block btn-primary">
+                    <h1 id="choose-file-label">Upload File...</h1>
+                    <input id="file-upload" class="" type="file" style="display: none;" accept="image/*">
+                </label>
+            </div>
+
+        </div>
+    </div>
+    <div class="row" style="">
+        <div class="col-6" style="width: 50%">
+            <div>
+                <div id="rotate-grp" class="" role="group">
+                    <button type="button" class="btn-lg btn-success" onclick="rotate90Degrees(clockwise = false)"><h2>Rotate Left</h2></button>
+                    <button type="button" class="btn-lg btn-warning" onclick="rotate90Degrees(clockwise = true)"><h2>Rotate Right</h2></button>
+                </div>
+                <canvas id="display-canvas"></canvas>
+                <canvas hidden id="predict-canvas"></canvas>
+            </div>
+
+        </div>
+
+        <div class="col-6" style="width: 50%;">
+            <div id="prob-penny">
+
+                <div  id="penny-label-text">
+                    <img id="loading-img" src="./static/ab79a231234507.564a1d23814ef.gif" height="100%">
+                    <h2></h2>
+                </div>
+            </div>
+            <!--<pre id="predictions">-->
+                <!--No Data-->
+            <!--</pre>-->
+            <div id="table-container">
+                <table class="table" id="pred-table">
+                    <thead>
+                        <th>
+                            Value
+                        </th>
+                        <th>
+                            Prob
+                        </th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
-
-
+    <div class="row"></div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script src="./static/exif.js"></script>
 <script>
 
     const img = new Image()
 
-    const MAX_CANVAS_DIM = 224;
+    const DISPLAY_CANVAS_DIM = 600;
+    const PREDICT_CANVAS_MAX_DIM = 224;
 
     const video = document.querySelector('.player')
-    const url_input = document.getElementById("url-input");
     const predict_btn = document.getElementById("predict");
-    const remote_img_btn = document.getElementById("process-remote-image");
-    const random_img_btn = document.getElementById("random-image");
-    const run_webcam_btn = document.getElementById("run-webcam");
-    const canvas = document.getElementById("canvas");
-    const buffer_canvas = document.getElementById("buffer-canvas");
-    const ctx = canvas.getContext('2d');
-    const buffer_ctx = buffer_canvas.getContext("2d");
+    // const url_input = document.getElementById("url-input");
+    // const remote_img_btn = document.getElementById("process-remote-image");
+    // const random_img_btn = document.getElementById("random-image");
+    // const run_webcam_btn = document.getElementById("run-webcam");
+    const predict_canvas = document.getElementById("predict-canvas");
+    const display_canvas = document.getElementById("display-canvas");
+    const predict_ctx = predict_canvas.getContext('2d');
+    const display_ctx = display_canvas.getContext("2d");
     const predictions = document.getElementById("predictions");
     const file_upload = document.getElementById("file-upload");
-
-
-    function getVideo(){
-        navigator.mediaDevices.getUserMedia({video : true, audio : false})
-            .then(localMediaStream => {
-                console.log(localMediaStream)
-                video.src = window.URL.createObjectURL(localMediaStream);
-                video.play();
-            })
-            .catch(err => {
-                console.error("OH NO!!", err);
-            })
-        }
-
-
-    function paintToCanvas() {
-        const width = video.videoWidth;
-        const height = video.videoHeight;
-        canvas.width = width;
-        canvas.height = height;
-        buffer_canvas.width = width;
-        buffer_canvas.height = height;
-        console.log(width, height);
-
-        var int = setInterval(() => {
-            buffer_ctx.drawImage(video, 0, 0, width, height);
-
-            var dataURL = buffer_canvas.toDataURL("image/png");
-            var data = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-
-            form = new FormData()
-            form.append( "json", JSON.stringify( {img: data} ))
-            fetch('/image_prediction_get_results', {
-                method: 'POST',
-                body: form
-            })
-            .then(res => res.json())
-            .then(res => {
-                img.src  = "data:image/jpeg;base64, "+res.data
-            })
-            .catch(e => {
-                console.log("failed on loaded callback")
-                console.log(e);
-                video.stop();
-                clearInterval(int)
-            })
-//            let pixels = ctx.getImageData(0, 0, width, height);
-//            ctx.putImageData(pixels, 0, 0);
-            //debugger;
-        }, 500);
-    }
+    const penny_label = document.getElementById("penny-label");
+    const penny_label_text = document.getElementById("penny-label-text");
+    const penny_label_text_h2 = document.querySelector("#penny-label-text h2")
+    const img_preview = document.getElementById("img-preview");
+    const load_img = document.getElementById("loading-img");
 
 
 
@@ -181,24 +192,31 @@ test5
         // Firefox supports PNG and JPEG. You could check img.src to
         // guess the original format, but be aware the using "image/jpg"
         // will re-encode the image.
-        var dataURL = canvas.toDataURL("image/png");
-
+        var dataURL = predict_canvas.toDataURL("image/png");
         return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     }
 
 
     function predict(){
-        data = getBase64Image();
+        let tbody = $("#pred-table tbody");
+        let data = getBase64Image();
         //below 2 lines are current critical https://stackoverflow.com/a/29823632
-        form = new FormData();
+        let form = new FormData();
+
+        tbody.empty()
         form.append( "json", JSON.stringify( {img: data} ));
         fetch('/predict_mobilenet', {
             method: 'POST',
             body: form
         })
-        .then(res => res.text())
+        .then(res => res.json())
         .then(res => {
-            predictions.innerText = res //  = res.data.toString()
+            //predictions.innerText = res.data.toString() //  = res.data.toString()
+
+            res.data.forEach((el) => {
+                let tmplt = `<tr><td>${el.label.replace(/_/g, " ")}</td><td>${Math.round(el.prob * 1000.0)/10.0}%</td></tr>`
+                tbody.append(tmplt)
+            })
         })
         .catch(e => {
             console.log("failed on loaded callback");
@@ -208,8 +226,12 @@ test5
 
     function predict_model(){
         //show loading image
-        document.getElementById("prob-penny").innerText = "";
-        document.getElementById("loading-img").style.visibility = "visible";
+
+
+
+        penny_label_text_h2.innerHTML = "";
+        penny_label_text_h2.className = "";
+        load_img.style.display = "inherit";
 
         data = getBase64Image();
         form = new FormData();
@@ -221,16 +243,26 @@ test5
         })
         .then(res => res.json())
         .then(res => {
-            document.getElementById("loading-img").style.visibility = "hidden";
+            load_img.style.display = "none";
             console.log(res.data)
-            const prob = Math.round(res.data[1] * 10000000)/100000;
-            document.getElementById("prob-penny").innerText = `P enny Probability: ${prob}%`
+            const penny_prob = res.data[1];
+            const prob = Math.round(penny_prob * 10000000.0)/100000.0;
+            penny_label_text_h2.innerHTML = `P(Penny): ${prob}%`;
+
+
+            if (penny_prob < 0.1){
+                penny_label_text_h2.className = "alert alert-danger";
+            } else if(penny_prob > 0.90){
+                penny_label_text_h2.className = "alert alert-success";
+            } else {
+               penny_label_text_h2.className = "alert alert-warning"
+            }
         })
         .catch(err => {
-            document.getElementById("loading-img").style.visibility = "hidden";
+            load_img.style.display = "none";
             console.log("failed on loaded callback");
             console.log(err)
-            document.getElementById("prob-penny").innerText = err;
+            penny_label_text_h2.html(err);
         })
     }
 
@@ -240,33 +272,46 @@ test5
 
         if(img.width > img.height){
             //scale on width
-            w = Math.min(MAX_CANVAS_DIM, img.width);
+            w =  Math.min(Math.max(DISPLAY_CANVAS_DIM, img.width), DISPLAY_CANVAS_DIM);
             aspect_ratio = img.width/img.height;
             h = w/aspect_ratio
         } else {
-            h = Math.min(MAX_CANVAS_DIM, img.height);
+            h = Math.min(Math.max(DISPLAY_CANVAS_DIM, img.height), DISPLAY_CANVAS_DIM);
             aspect_ratio = img.height/img.width;
             w = h/aspect_ratio
         }
         return {height: h, width: w}
+    };
+
+    function updatePredictCanvasAndPredict(){
+        const ratio = PREDICT_CANVAS_MAX_DIM/DISPLAY_CANVAS_DIM;
+        predict_canvas.width = display_canvas.width * ratio;
+        predict_canvas.height = display_canvas.height * ratio;
+        predict_ctx.drawImage(display_canvas, 0, 0, predict_canvas.width, predict_canvas.height);
+
+        setTimeout(predict_model, 150);
+        setTimeout(predict, 350)
     }
 
     function addImageToCanvas(){
-        console.log('addImage To canvas')
+        console.log('addImage To canvas');
 
         const scaled_dims = scaled_img_dims(img);
 
-        canvas.width = scaled_dims.width;
-        canvas.height = scaled_dims.height;
+        display_canvas.width = scaled_dims.width;
+        display_canvas.height = scaled_dims.height;
 
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        setTimeout(predict_model, 500)
+        //Need to make buffer canvas based
+        display_ctx.drawImage(img, 0, 0, display_canvas.width, display_canvas.height);
+
+        updatePredictCanvasAndPredict()
+
     }
 
     let angleInDegrees = 0
-    function rotate90DegreesRight(){
+    function rotate90Degrees(clockwise = true){
 
-        angleInDegrees += 90
+        angleInDegrees += clockwise ? 90 : 270;
         angleInDegrees = angleInDegrees % 360;
 
         const scaled_dims = scaled_img_dims(img);
@@ -274,36 +319,36 @@ test5
         console.log('New angle in Degrees', angleInDegrees)
 
         if (angleInDegrees === 90 || angleInDegrees === 270){
-            canvas.width = scaled_dims.height;
-            canvas.height = scaled_dims.width;
+            display_canvas.width = scaled_dims.height;
+            display_canvas.height = scaled_dims.width;
         } else {
-            canvas.width = scaled_dims.width;
-            canvas.height = scaled_dims.height;
+            display_canvas.width = scaled_dims.width;
+            display_canvas.height = scaled_dims.height;
         }
 
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+        display_ctx.clearRect(0,0,display_canvas.width,display_canvas.height);
     
         // save the unrotated ctx of the canvas so we can restore it later
         // the alternative is to untranslate & unrotate after drawing
-        ctx.save();
+        display_ctx.save();
     
         // move to the center of the canvas
-        ctx.translate(canvas.width/2,canvas.height/2);
+        display_ctx.translate(display_canvas.width/2,display_canvas.height/2);
     
         // rotate the canvas to the specified degrees
-        ctx.rotate(angleInDegrees*Math.PI/180);
+        display_ctx.rotate(angleInDegrees*Math.PI/180);
     
         // draw the image
         // since the ctx is rotated, the image will be rotated also
-        h = canvas.width
-        w = canvas.height
+        h = display_canvas.width
+        w = display_canvas.height
         console.log(h, w)
         //ctx.drawImage(img, -scaled_dims.width/2,-scaled_dims.height/2);
-        ctx.drawImage(img, -scaled_dims.width/2,-scaled_dims.height/2, scaled_dims.width, scaled_dims.height);
+        display_ctx.drawImage(img, -scaled_dims.width/2,-scaled_dims.height/2, scaled_dims.width, scaled_dims.height);
 
         // we’re done with the rotating so restore the unrotated ctx
-        //ctx.restore();
-        setTimeout(predict_model, 500)
+        display_ctx.restore();
+        updatePredictCanvasAndPredict()
     }
 
 
@@ -319,6 +364,7 @@ test5
             var reader = new FileReader();
             reader.onload = function (e) {
                 img.src = e.target.result;
+                //img_preview.src = img.src;
             }
             reader.readAsDataURL(this.files[0]);
         }
@@ -326,32 +372,22 @@ test5
 
     predict_btn.addEventListener('click', predict);
 
-    // remote_img_btn.addEventListener('click', () => {
-    //     fetch('/get_remote_image?image_url='+url_input.value)
-    //         .then(res => res.text())
-    //         .then(res => {
-    //             img.src = "data:image/jpeg;base64, "+res
-    //         })
-    //         .catch(e => {
-    //             console.log("failed on loaded callback");
-    //             console.log(e)
-    //         })
-    // });
+    //video.addEventListener('canplay', paintToCanvas);
 
-    random_img_btn.addEventListener('click', () => {
-        fetch('get_random_image_from_cache')
-            .then(res => res.text())
-            .then(res => {
-                img.src = "data:image/jpeg;base64, "+res
-            })
-    })
+    $(document).on('change', ':file', function() {
+        console.log($(this))
+        var input = $(this),
+            numFiles = input.get(0).files ? input.get(0).files.length : 1,
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        console.log(numFiles, label)
+        input.trigger('fileselect', [numFiles, label]);
+        if(numFiles < 1){
+            $("#choose-file-label").text("Upload File...")
+        } else {
+            $("#choose-file-label").text(`File: ${label}`)
+        }
 
-    // run_webcam_btn.addEventListener('click', () =>{
-    //     getVideo()
-    // })
-
-    video.addEventListener('canplay', paintToCanvas);
-
+    });
 
     $(document).ready(function(){
         img.src = "./static/elephant.jpeg"; //demo image
@@ -359,6 +395,8 @@ test5
             addImageToCanvas()
             //setTimeout(predict_model, 500)
         }
+
+
     })
 </script>
 </body>
