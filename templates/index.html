@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Title</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
     <style>
         body {
             padding-top: 10px;
-            font-size: 40px;
+            /*font-size: 40px;*/
         }
 
         #url-input {
@@ -22,19 +25,6 @@
           width:200px;
         }
 
-        pre {
-            background-color: lightgrey;
-            border-style: solid ;
-            border-width: 1px;
-            border-color: black;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .container {
-            width: 95%;
-            margin-top: 20px;
-        }
 
         .rotate90 {
             -webkit-transform: rotate(90deg);
@@ -60,13 +50,24 @@
             text-align: center;
         }
 
-        #display-canvas {
-            width: 100%;
-            height: 100%;
+        #choose-file-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 10ch;
         }
 
-        h1 {
-            font-size: 3.5rem;
+        #display-canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            height: 300px;
+        }
+
+        #display-canvas {
+            /*width: 100%;*/
+            /*height: 100%;*/
+            max-height: 300px;
+
         }
 
         #penny-label-text {
@@ -74,17 +75,14 @@
             display: flex;
             justify-content: center;
             align-items: stretch;
-            /*text-align: center;*/
-            /*vertical-align: middle;*/
-            font-size: 40px;
+
         }
 
         #rotate-grp {
-            height: 80px;
-            margin-bottom: 1px;
+            /*height: 80px;*/
+            margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
-            align-items: stretch;
+            justify-content: space-evenly;
         }
 
         #table-container {
@@ -96,39 +94,40 @@
     </style>
 </head>
 <body>
-<div class="container-fluid" style="max-width: 95%;%">
-    <div class="row" style="">
+<div class="container-fluid">
+    <div class="row">
         <div class="col-12">
-            <div class="row" style="margin-bottom: 20px">
+            <div id="rotate-grp">
+                <div  class="btn-group" role="group">
+                    <button type="button" class="btn btn-success" onclick="rotate90Degrees(clockwise = false)">Left</button>
+                    <button type="button" class="btn btn-warning" onclick="rotate90Degrees(clockwise = true)">Right</button>
+                </div>
 
-                <button hidden  class="btn-lg btn-block btn-primary h1" id="predict"><h1>Predict</h1></button>
-                <label id="choose-file" class="btn-lg btn-block btn-primary">
-                    <h1 id="choose-file-label">Upload File...</h1>
+                <label  id="choose-file" class="btn btn-primary">
+                    <div id="choose-file-label">Upload...</div>
                     <input id="file-upload" class="" type="file" style="display: none;" accept="image/*">
                 </label>
-            </div>
 
+            </div>
         </div>
     </div>
     <div class="row" style="">
-        <div class="col-6" style="width: 50%">
+        <div class="col-12">
             <div>
-                <div id="rotate-grp" class="" role="group">
-                    <button type="button" class="btn-lg btn-success" onclick="rotate90Degrees(clockwise = false)"><h2>Rotate Left</h2></button>
-                    <button type="button" class="btn-lg btn-warning" onclick="rotate90Degrees(clockwise = true)"><h2>Rotate Right</h2></button>
+                <div id="display-canvas-wrapper">
+                    <canvas id="display-canvas"></canvas>
                 </div>
-                <canvas id="display-canvas"></canvas>
                 <canvas hidden id="predict-canvas"></canvas>
             </div>
 
         </div>
-
-        <div class="col-6" style="width: 50%;">
+    </div>
+    <div class="row">
+        <div class="col-12" style="">
             <div id="prob-penny">
-
                 <div  id="penny-label-text">
                     <img id="loading-img" src="./static/ab79a231234507.564a1d23814ef.gif" height="100%">
-                    <h2></h2>
+                    <h5></h5>
                 </div>
             </div>
             <!--<pre id="predictions">-->
@@ -160,11 +159,11 @@
 
     const img = new Image()
 
-    const DISPLAY_CANVAS_DIM = 600;
+    const DISPLAY_CANVAS_DIM = 300;
     const PREDICT_CANVAS_MAX_DIM = 224;
 
     const video = document.querySelector('.player')
-    const predict_btn = document.getElementById("predict");
+    //const predict_btn = document.getElementById("predict");
     // const url_input = document.getElementById("url-input");
     // const remote_img_btn = document.getElementById("process-remote-image");
     // const random_img_btn = document.getElementById("random-image");
@@ -177,7 +176,7 @@
     const file_upload = document.getElementById("file-upload");
     const penny_label = document.getElementById("penny-label");
     const penny_label_text = document.getElementById("penny-label-text");
-    const penny_label_text_h2 = document.querySelector("#penny-label-text h2")
+    const penny_label_text_h2 = document.querySelector("#penny-label-text h5")
     const img_preview = document.getElementById("img-preview");
     const load_img = document.getElementById("loading-img");
 
@@ -267,7 +266,6 @@
     }
 
     let scaled_img_dims = (img) => {
-
         let h, w, aspect_ratio;
 
         if(img.width > img.height){
@@ -370,7 +368,7 @@
         }
     })
 
-    predict_btn.addEventListener('click', predict);
+    //predict_btn.addEventListener('click', predict);
 
     //video.addEventListener('canplay', paintToCanvas);
 
