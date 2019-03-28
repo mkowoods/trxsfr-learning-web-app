@@ -3,14 +3,6 @@
  - Tesnorflow 1.4
 
 
- # TODO
- https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
-https://hackernoon.com/creating-insanely-fast-image-classifiers-with-mobilenet-in-tensorflow-f030ce0a2991
- need to add a batch learner for classifying the case
- 
- compile tensorflow from scratch https://stackoverflow.com/questions/41293077/how-to-compile-tensorflow-with-sse4-2-and-avx-instructions
- https://gist.github.com/bage79/ef955a460e33555830ea9217c5e2e925
- 
 # FUTURE OPTIMIZATIONS 
  - quantize the model:  https://www.tensorflow.org/performance/quantization
  - can you serve the model faster using different compilation techniques?
