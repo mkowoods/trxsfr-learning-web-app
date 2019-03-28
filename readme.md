@@ -17,7 +17,7 @@ https://www.kaggle.com/c/imagenet-object-detection-challenge/data
 https://cloud.google.com/compute/docs/load-balancing/network/example
 
 ## Memory footprint
-tests are based on importing tensorflow and loading the  weights for imagenet
+Tests are based on importing tensorflow and loading the  weights for imagenet with different hyper parameters
 ```
 import tensorflow as tf
 mobilenet = tf.keras.applications.mobilenet
@@ -30,8 +30,8 @@ mobilenet = tf.keras.applications.mobilenet
 - Loading mobilenet with alpha @ 1.0
     - `wts = mobilenet.MobileNet(weights='imagenet', alpha = 1.0)`
     - Memory 157.7MB
-- Loading mobilenet with alpah @ 0.25, no top and image size = 128 by 128
-    - `wts = mobilenet.MobileNet(weights='imagenet', include_top = False, alpha = 0.25, input_shape = (128, 128, 3))'
+- Loading mobilenet with alpha @ 0.25, no top and image size = 128 by 128
+    - `wts = mobilenet.MobileNet(weights='imagenet', include_top = False, alpha = 0.25, input_shape = (128, 128, 3))`
     - Memory: 137.6MB
     
     
