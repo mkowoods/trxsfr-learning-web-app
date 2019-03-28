@@ -7,18 +7,6 @@
  - quantize the model:  https://www.tensorflow.org/performance/quantization
  - can you serve the model faster using different compilation techniques?
  
-
-## sample remote images 
- https://www.cesarsway.com/sites/newcesarsway/files/styles/large_article_preview/public/Common-dog-behaviors-explained.jpg?itok=FSzwbBoi
- https://fm.cnbc.com/applications/cnbc.com/resources/img/editorial/2017/05/12/104466932-PE_Color.240x240.jpg?v=1494613853
- 
-
- 
- https://gking.harvard.edu/files/0s.pdf
- https://groups.google.com/forum/#!topic/keras-users/MUO6v3kRHUw
- https://medium.com/@timanglade/how-hbos-silicon-valley-built-not-hotdog-with-mobile-tensorflow-keras-react-native-ef03260747f3
- https://www.tomstall.com/content/create-a-globally-distributed-tensorflow-serving-cluster-with-nearly-no-pain/
- https://gist.github.com/avloss/01e43d208fbdb2c5b4f9b50e71617cc8
  
  Need some random sample data to train the model as well
  
